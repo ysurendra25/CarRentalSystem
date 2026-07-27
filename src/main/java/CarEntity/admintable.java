@@ -2,13 +2,16 @@ package CarEntity;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -27,7 +30,15 @@ public class admintable {
      private LocalDateTime createdAt;
 
      private LocalDateTime updatedAt;
-
+     
+     //relations
+     @OneToMany(mappedBy = "admin",cascade = CascadeType.ALL)
+     private List<UserTable> user;
+     
+     @OneToMany(mappedBy = "admin",cascade=CascadeType.ALL)
+     private List<CarsTable> cars;
+     
+     
      @PrePersist
      protected void onCreate() {
          createdAt = LocalDateTime.now();

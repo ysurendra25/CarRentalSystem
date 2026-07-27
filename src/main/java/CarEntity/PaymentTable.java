@@ -13,6 +13,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -32,6 +35,11 @@ public class PaymentTable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_status",nullable = false)
 	private payment_status payment_status;
+	
+	@OneToOne
+	@JoinColumn(name="booking_id")
+	private BookingsTable booking;
+	
 	
 	 @PrePersist
 	    protected void onPayDate() {

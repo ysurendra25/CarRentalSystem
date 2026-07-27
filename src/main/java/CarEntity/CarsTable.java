@@ -3,8 +3,10 @@ package CarEntity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +14,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -38,6 +43,20 @@ public class CarsTable {
 	@Column(updatable = false)
 	LocalDateTime created_at;
 	LocalDateTime update_at;
+	
+	//relations
+    @ManyToOne
+    @JoinColumn(name = "aid")
+    private admintable admin;
+    
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private UserTable user;
+    
+    @OneToMany(mappedBy = "car",cascade = CascadeType.ALL)
+    private List<BookingsTable> bookings;
+    
+	
 	@PrePersist
 	protected void onCreate() {
 		created_at = LocalDateTime.now();
