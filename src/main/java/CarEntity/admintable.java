@@ -1,6 +1,5 @@
 package CarEntity;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -17,115 +16,135 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="admintable")
+@Table(name = "admintable")
 public class admintable {
-     @Id
-     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     private int aid;
-     private String username;
-     private String email;
-     private String password_hash;
-     private String role;
-     @Column(updatable = false)
-     private LocalDateTime createdAt;
 
-     private LocalDateTime updatedAt;
-     
-     //relations
-     @OneToMany(mappedBy = "admin",cascade = CascadeType.ALL)
-     private List<UserTable> user;
-     
-     @OneToMany(mappedBy = "admin",cascade=CascadeType.ALL)
-     private List<CarsTable> cars;
-     
-     
-     @PrePersist
-     protected void onCreate() {
-         createdAt = LocalDateTime.now();
-     }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int aid;
 
-     @PreUpdate
-     protected void onUpdate() {
-         updatedAt = LocalDateTime.now();
-     }
-     
-     
+    @Column(nullable = false)
+    private String username;
 
-	 public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    @Column(nullable = false, unique = true)
+    private String email;
 
-	 public void setCreatedAt(LocalDateTime createdAt) {
-		 this.createdAt = createdAt;
-	 }
+    @Column(nullable = false)
+    private String password_hash;
 
-	 public LocalDateTime getUpdatedAt() {
-		 return updatedAt;
-	 }
+    @Column(nullable = false)
+    private String role;
 
-	 public void setUpdatedAt(LocalDateTime updatedAt) {
-		 this.updatedAt = updatedAt;
-	 }
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-	 public int getAid() {
-		 return aid;
-	 }
-	 public void setAid(int aid) {
-		 this.aid = aid;
-	 }
-	 public String getUsername() {
-		 return username;
-	 }
-	 public void setUsername(String username) {
-		 this.username = username;
-	 }
-	 public String getEmail() {
-		 return email;
-	 }
-	 public void setEmail(String email) {
-		 this.email = email;
-	 }
-	 public String getPassword_hash() {
-		 return password_hash;
-	 }
-	 public void setPassword_hash(String password_hash) {
-		 this.password_hash = password_hash;
-	 }
-	 public String getRole() {
-		 return role;
-	 }
-	 public void setRole(String role) {
-		 this.role = role;
-	 }
+    private LocalDateTime updatedAt;
 
-	 @Override
-	 public int hashCode() {
-		return Objects.hash(aid, createdAt, email, password_hash, role, updatedAt, username);
-	 }
 
-	 @Override
-	 public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		admintable other = (admintable) obj;
-		return aid == other.aid && Objects.equals(createdAt, other.createdAt) && Objects.equals(email, other.email)
-				&& Objects.equals(password_hash, other.password_hash) && Objects.equals(role, other.role)
-				&& Objects.equals(updatedAt, other.updatedAt) && Objects.equals(username, other.username);
-	 }
 
-	 @Override
-	 public String toString() {
-		return "admintable [aid=" + aid + ", username=" + username + ", email=" + email + ", password_hash="
-				+ password_hash + ", role=" + role + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
-	 }
-	
-	 
-     
-     
-     
-     
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    private List<UserTable> users;
+
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    private List<CarsTable> cars;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public int getAid() {
+        return aid;
+    }
+
+    public void setAid(int aid) {
+        this.aid = aid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword_hash() {
+        return password_hash;
+    }
+
+    public void setPassword_hash(String password_hash) {
+        this.password_hash = password_hash;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public List<UserTable> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserTable> users) {
+        this.users = users;
+    }
+
+    public List<CarsTable> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<CarsTable> cars) {
+        this.cars = cars;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(aid);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj)
+            return true;
+
+        if (!(obj instanceof admintable))
+            return false;
+
+        admintable other = ( admintable) obj;
+
+        return aid == other.aid;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminTable [aid=" + aid +
+                ", username=" + username +
+                ", email=" + email + "]";
+    }
 }

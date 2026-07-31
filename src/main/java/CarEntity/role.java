@@ -1,7 +1,9 @@
 package CarEntity;
 
 public enum role {
-     Admin,
-     Owner,
-     Customer
+
+    ADMIN,
+    OWNER,
+    CUSTOMER
+
 }

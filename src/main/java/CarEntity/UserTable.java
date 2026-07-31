@@ -31,7 +31,7 @@ public class UserTable {
       private String phone;
       private String password_hash;
       @Enumerated(EnumType.STRING)
-      @Column(columnDefinition = "ENUM('admin','owner','customer')")
+      @Column(nullable = false)
       private role role;
       @Column(updatable = false)
       private LocalDateTime created_at;
