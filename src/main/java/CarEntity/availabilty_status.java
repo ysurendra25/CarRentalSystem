@@ -1,7 +1,8 @@
 package CarEntity;
 
 public enum availabilty_status {
-     available,
-     booked,
-     maintenance
+    available,
+    reserved,
+    booked,
+    maintenance
 }

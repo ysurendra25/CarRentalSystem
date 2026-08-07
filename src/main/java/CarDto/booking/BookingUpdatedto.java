@@ -1,5 +1,10 @@
 package CarDto.booking;
 
-public class BookingUpdatedto {
 
+import java.time.LocalDateTime;
+
+public class BookingUpdatedto {
+	
+	
+	
 }
