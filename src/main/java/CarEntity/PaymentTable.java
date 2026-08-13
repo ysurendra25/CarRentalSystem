@@ -39,7 +39,14 @@ public class PaymentTable {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
     private payment_status payment_status;
+    @Column(name = "razorpay_order_id")
+    private String razorpayOrderId;
 
+    @Column(name = "razorpay_payment_id")
+    private String razorpayPaymentId;
+
+    @Column(name = "razorpay_signature")
+    private String razorpaySignature;
     @PrePersist
     protected void onPayDate() {
 
@@ -52,7 +59,33 @@ public class PaymentTable {
         }
     }
 
-    public int getPayment_id() {
+    
+    public String getRazorpayOrderId() {
+		return razorpayOrderId;
+	}
+
+	public void setRazorpayOrderId(String razorpayOrderId) {
+		this.razorpayOrderId = razorpayOrderId;
+	}
+
+	public String getRazorpayPaymentId() {
+		return razorpayPaymentId;
+	}
+
+	public void setRazorpayPaymentId(String razorpayPaymentId) {
+		this.razorpayPaymentId = razorpayPaymentId;
+	}
+
+	public String getRazorpaySignature() {
+		return razorpaySignature;
+	}
+
+
+	public void setRazorpaySignature(String razorpaySignature) {
+		this.razorpaySignature = razorpaySignature;
+	}
+
+	public int getPayment_id() {
         return payment_id;
     }
 
