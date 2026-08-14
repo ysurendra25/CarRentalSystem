@@ -1,6 +1,8 @@
 package CarService.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,8 +12,10 @@ import CarDto.payment.PaymentResponseDto;
 import CarEntity.BookingsTable;
 import CarEntity.PaymentTable;
 import CarEntity.UserTable;
+import CarEntity.availabilty_status;
 import CarEntity.payment_method;
 import CarEntity.payment_status;
+import CarEntity.role;
 import CarEntity.status;
 import CarRepo.BookingRepository;
 import CarRepo.PaymentRepository;
@@ -68,41 +72,100 @@ public class PaymentServiceImpl implements PaymentService{
 		book.setStatus(status.confirmed);
 		bookingRepo.save(book);
 		
-		PaymentResponseDto resp = new PaymentResponseDto();
-		resp.setPaymentId(savedPayment.getPayment_id());
-		resp.setBookingId(savedPayment.getBooking().getBooking_id());
-		resp.setAmount(savedPayment.getAmount());
-		resp.setPaymentMethod(savedPayment.getPayment_method());
-		resp.setPaymentStatus(savedPayment.getPayment_status());
-		resp.setPaymentDate(savedPayment.getPayment_date());
-		resp.setRazorpayOrderId(savedPayment.getRazorpayOrderId());
-		resp.setRazorpayPaymentId(savedPayment.getRazorpayPaymentId());
+		
+		return convertToResponse(savedPayment);
+	}
+	private PaymentResponseDto convertToResponse(PaymentTable payment) {
+	    PaymentResponseDto resp = new PaymentResponseDto();
+
+	    resp.setPaymentId(payment.getPayment_id());
+	    resp.setBookingId(payment.getBooking().getBooking_id());
+	    resp.setAmount(payment.getAmount());
+	    resp.setPaymentMethod(payment.getPayment_method());
+	    resp.setPaymentStatus(payment.getPayment_status());
+	    resp.setPaymentDate(payment.getPayment_date());
+	    resp.setRazorpayOrderId(payment.getRazorpayOrderId());
+	    resp.setRazorpayPaymentId(payment.getRazorpayPaymentId());
+
+	    return resp;
+	}
+
+	@Override
+	public PaymentResponseDto getPaymentById(int paymentId) {
+		PaymentTable pay = payRepo.findById(paymentId).orElseThrow(()->new RuntimeException("no payments on this id"));
+	    UserTable user = AuthUtils.getLoggedUser(userRepo);
+	    if(!user.equals(pay.getBooking().getUser())) {
+	    	    throw new RuntimeException("User not valid");
+	    }
+		
+		
+		return convertToResponse(pay);
+	}
+
+	@Override
+	public List<PaymentResponseDto> getPaymentsByUser() {
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+		
+		List<PaymentTable> payments = payRepo.findByBookingUserId(user.getUser_id());
+		if(payments.isEmpty()) {
+			throw new RuntimeException("No payments found for this user");
+		}
+		List<PaymentResponseDto> resp = new ArrayList<>();
+		for(PaymentTable pay:payments) {
+			resp.add(convertToResponse(pay));
+		}
+		
+		return resp;
+	}
+    //this is for admin purpose only
+	@Override
+	public List<PaymentResponseDto> getAllPayments() {
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+		if(!user.getRole().equals(role.ADMIN)) {
+			throw new RuntimeException("you have no access");
+		}
+		List<PaymentTable> pay = payRepo.findAll();
+		if(pay.isEmpty()) {
+			throw new RuntimeException("currently in our app no BOOKINGS!");
+		}
+		List<PaymentResponseDto> resp = new ArrayList<>();
+		for(PaymentTable p1:pay) {
+			resp.add(convertToResponse(p1));
+		}
 		
 		return resp;
 	}
 
 	@Override
-	public PaymentResponseDto getPaymentById(int paymentId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<PaymentResponseDto> getPaymentsByUser() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<PaymentResponseDto> getAllPayments() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public PaymentResponseDto refundPayment(int paymentId) {
-		// TODO Auto-generated method stub
-		return null;
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+		PaymentTable pay = payRepo.findById(paymentId).orElseThrow(()->new RuntimeException("Payment not found!"));
+		BookingsTable book = pay.getBooking();
+		
+		if(!user.equals(pay.getBooking().getUser())) {
+			throw new RuntimeException("you have no access for this payment!");
+		}
+		if(pay.getPayment_status().equals(payment_status.refunded)) {
+		    throw new RuntimeException("Payment is already refunded");
+		}
+		if(!pay.getPayment_status().equals(payment_status.success)) {
+			throw new RuntimeException("this is not confirmed payment!");
+		}
+		LocalDateTime deadLine = pay.getBooking().getStart_date().minusHours(24);
+		if(LocalDateTime.now().isAfter(deadLine)) {
+		    throw new RuntimeException("Refund period has expired. Contact customer care!");
+		}
+		
+		pay.setPayment_status(payment_status.refunded);
+		book.setStatus(status.cancelled);
+		book.getCar().setAvailabilty_status(availabilty_status.available);
+		payRepo.save(pay);
+		bookingRepo.save(book);
+		
+		PaymentResponseDto resp = new PaymentResponseDto();
+		resp.setMessage("Payment refunded successfully and booking cancelled");
+		
+		return resp;
 	}
 
 }

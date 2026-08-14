@@ -17,14 +17,17 @@ import CarDto.booking.BookingRequestDto;
 import CarDto.booking.BookingResponseDto;
 import CarEntity.BookingsTable;
 import CarEntity.CarsTable;
+import CarEntity.PaymentTable;
 import CarEntity.UserTable;
 import CarEntity.availabilty_status;
 import CarEntity.status;
 import CarRepo.BookingRepository;
 import CarRepo.CartRepository;
+import CarRepo.PaymentRepository;
 import CarRepo.UserRepository;
 import CarService.BookingService;
 import CarService.CarService;
+import CarService.PaymentService;
 import Security1.JwtService;
 import CarRepo.CarRepository;
 
@@ -35,13 +38,21 @@ public class BookingServiceImpl implements BookingService{
 	private UserRepository userRepo;
 	private CarRepository carRepo;
 	private JwtService jwtService;
-	public BookingServiceImpl(BookingRepository bookingRepo, UserRepository userRepo, CarRepository carRepo,
-			JwtService jwtService) {
-		super();
-		this.bookingRepo = bookingRepo;
-		this.userRepo = userRepo;
-		this.carRepo = carRepo;
-		this.jwtService = jwtService;
+	private PaymentRepository payRepo;
+	private PaymentService paymentService;
+	public BookingServiceImpl(
+	        BookingRepository bookingRepo,
+	        UserRepository userRepo,
+	        CarRepository carRepo,
+	        PaymentRepository payRepo,
+	        PaymentService paymentService) {
+
+	    super();
+	    this.bookingRepo = bookingRepo;
+	    this.userRepo = userRepo;
+	    this.carRepo = carRepo;
+	    this.payRepo = payRepo;
+	    this.paymentService = paymentService;
 	}
 	
 	org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -198,16 +209,16 @@ public class BookingServiceImpl implements BookingService{
 
 	        BigDecimal extraAmount = newTotalPrice.subtract(oldTotalPrice);
 
-	        // TODO:
-	        // Collect additional payment of extraAmount.
-	        // If payment fails, do not update booking.
-
+	        throw new RuntimeException(
+                    "Additional payment required: "
+                            + extraAmount);
 	    } else if (newTotalPrice.compareTo(oldTotalPrice) < 0) {
 
 	        BigDecimal refundAmount = oldTotalPrice.subtract(newTotalPrice);
 
-	        // TODO:
-	        // Refund refundAmount to customer.
+	        throw new RuntimeException(
+                    "Partial refund required: "
+                            + refundAmount);
 
 	    } else {
 
@@ -245,6 +256,37 @@ public class BookingServiceImpl implements BookingService{
 		if(booking.getStart_date().isBefore(LocalDateTime.now())) {
 			throw new RuntimeException("Booking already stated.Contact customer care");
 		}
+		// Unpaid booking
+	    if (booking.getStatus().equals(status.pending)) {
+
+	        booking.setStatus(status.cancelled);
+
+	        CarsTable car = booking.getCar();
+	        car.setAvailabilty_status(
+	                availabilty_status.available);
+
+	        bookingRepo.save(booking);
+	        carRepo.save(car);
+
+	        return "Booking cancelled successfully";
+	    }
+
+	    // Paid booking
+	    if (booking.getStatus().equals(status.confirmed)) {
+
+	        PaymentTable payment =
+	                payRepo.findByBooking_Booking_id(bookingId);
+
+	        if (payment == null) {
+	            throw new RuntimeException(
+	                    "Payment not found for this booking");
+	        }
+
+	        paymentService.refundPayment(
+	                payment.getPayment_id());
+
+	        return "Booking cancelled and payment refunded successfully";
+	    }
 		
 		booking.setStatus(status.cancelled);
 		CarsTable car = booking.getCar();

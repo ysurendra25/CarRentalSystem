@@ -26,6 +26,8 @@ public class UserTable {
       @Id
       @GeneratedValue(strategy = GenerationType.IDENTITY)
       private int user_id;
+      @Enumerated(EnumType.STRING)
+      private owner_status ownerStatus;
       private String pname;
       private String email;
       private String phone;
@@ -54,6 +56,7 @@ public class UserTable {
       @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
       private List<CartTable> cartItems;
       
+      private LocalDateTime ownerRejectedAt;
       
       @PrePersist
       protected void onCreate() {
@@ -64,7 +67,13 @@ public class UserTable {
 		update_at = LocalDateTime.now();
 	  }
       
-      
+      public owner_status getOwnerStatus() {
+    	    return ownerStatus;
+      }
+
+      public void setOwnerStatus(owner_status ownerStatus) {
+    			this.ownerStatus = ownerStatus;
+      }
 	  public int getUser_id() {
 		  return user_id;
 	  }
@@ -122,6 +131,13 @@ public class UserTable {
 	  }
 	  public void setUpdate_at(LocalDateTime update_at) {
 		  this.update_at = update_at;
+	  }  
+	  
+	  public LocalDateTime getOwnerRejectedAt() {
+		return ownerRejectedAt;
+	}
+	  public void setOwnerRejectedAt(LocalDateTime ownerRejectedAt) {
+		  this.ownerRejectedAt = ownerRejectedAt;
 	  }
 	  @Override
 	  public boolean equals(Object obj) {
