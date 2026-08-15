@@ -1,15 +1,12 @@
 package CarService.impl;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.stereotype.Service;
 
 import CarDto.owner.OwnerRequestDto;
 import CarDto.owner.OwnerResponseDto;
-import CarDto.user.UserResponseDto;
 import CarEntity.UserTable;
 import CarEntity.owner_status;
 import CarEntity.role;
@@ -18,15 +15,33 @@ import CarService.OwnerService;
 import CarUtils.AuthUtils;
 
 @Service
-public class OwnerServiceImpl implements OwnerService{
+public class OwnerServiceImpl implements OwnerService {
 
-	private UserRepository userRepo;
+    private UserRepository userRepo;
 
-	@Override
-	public OwnerResponseDto requestOwner(OwnerRequestDto request) {
-		UserTable user = AuthUtils.getLoggedUser(userRepo);
-		
-		if (user.getOwnerStatus() == owner_status.REJECTED) {
+    public OwnerServiceImpl(UserRepository userRepo) {
+        super();
+        this.userRepo = userRepo;
+    }
+
+    @Override
+    public OwnerResponseDto requestOwner(OwnerRequestDto request) {
+        UserTable user = AuthUtils.getLoggedUser(userRepo);
+        if (user.getRole() == role.OWNER &&
+            user.getOwnerStatus() == owner_status.APPROVED) {
+
+            throw new RuntimeException("You are already an owner!");
+        }
+
+        if (user.getRole() == role.OWNER &&
+            user.getOwnerStatus() == owner_status.PENDING) {
+
+            throw new RuntimeException(
+                    "Your owner request is already pending!");
+        }
+
+        if (user.getRole() == role.OWNER &&
+            user.getOwnerStatus() == owner_status.REJECTED) {
 
             if (user.getOwnerRejectedAt() == null) {
                 throw new RuntimeException(
@@ -35,39 +50,42 @@ public class OwnerServiceImpl implements OwnerService{
 
             long coolingDays = ChronoUnit.DAYS.between(
                     user.getOwnerRejectedAt(),
-                    LocalDateTime.now());
+                    LocalDateTime.now()
+            );
 
+            // 30-day cooling period
             if (coolingDays < 30) {
                 throw new RuntimeException(
                         "You are under the 30-day cooling period");
             }
+
+            // Cooling period completed
+            user.setOwnerStatus(owner_status.PENDING);
+            user.setOwnerRejectedAt(null);
         }
-		if(user.getOwnerStatus()==owner_status.APPROVED) {
-			throw new RuntimeException("You are already Owner!");
-		}
-		if(user.getOwnerStatus()==owner_status.PENDING) {
-			throw new RuntimeException("your status is pending!");
-		}
-		if (user.getRole()!=role.CUSTOMER) {
-		    throw new RuntimeException(
-		        "Only customers can request owner access"
-		    );
-		}
-			user.setRole(role.OWNER);
-			user.setOwnerStatus(owner_status.PENDING);
-			
-		UserTable savedUser =  userRepo.save(user);
-		
-		OwnerResponseDto resp = new OwnerResponseDto();
-		resp.setUserId(savedUser.getUser_id());
-		resp.setPname(savedUser.getPname());
-		resp.setEmail(savedUser.getEmail());
-		resp.setOwnerStatus(savedUser.getOwnerStatus().name());
-		resp.setMessage("Owner request submitted successfully");
-		
-		
-		return resp;
-	}
-	
-	
+
+        // Normal customer requesting owner access
+        else if (user.getRole() == role.CUSTOMER) {
+
+            user.setRole(role.OWNER);
+            user.setOwnerStatus(owner_status.PENDING);
+        }
+        else {
+            throw new RuntimeException(
+                    "Invalid user state for owner request");
+        }
+        UserTable savedUser = userRepo.save(user);
+
+        OwnerResponseDto resp = new OwnerResponseDto();
+
+        resp.setUserId(savedUser.getUser_id());
+        resp.setPname(savedUser.getPname());
+        resp.setEmail(savedUser.getEmail());
+        resp.setOwnerStatus(
+                savedUser.getOwnerStatus().name());
+        resp.setMessage(
+                "Owner request submitted successfully");
+
+        return resp;
+    }
 }

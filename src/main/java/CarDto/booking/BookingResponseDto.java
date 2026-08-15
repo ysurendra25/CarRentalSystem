@@ -3,6 +3,7 @@ package CarDto.booking;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import CarEntity.UserTable;
 import CarEntity.status;
 
 public class BookingResponseDto {
@@ -10,6 +11,8 @@ public class BookingResponseDto {
 	private Integer bookingId;
 
 	private Integer carId;
+	
+	private UserTable user;
 
 	private String brand;
 
@@ -39,6 +42,14 @@ public class BookingResponseDto {
 
 	public void setCarId(Integer carId) {
 		this.carId = carId;
+	}
+
+	public UserTable getUser() {
+		return user;
+	}
+
+	public void setUser(UserTable user) {
+		this.user = user;
 	}
 
 	public String getBrand() {
