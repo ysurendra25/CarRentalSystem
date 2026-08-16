@@ -1,6 +1,5 @@
 package CarService.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import CarDto.user.LoginRequestDto;
 import CarDto.user.LoginResponseDto;
 import CarDto.user.RegisterRequestDto;
-import CarDto.user.UserResponseDto;
 import CarDto.user.UserResponseDto;
 import CarEntity.UserTable;
 import CarEntity.role;
@@ -21,16 +19,9 @@ import Security1.JwtService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     private UserRepository userRepo;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-    
-    @Autowired
     private JwtService jwtService;
-    
-    
 
     public UserServiceImpl(UserRepository userRepo, PasswordEncoder passwordEncoder, JwtService jwtService) {
 		super();

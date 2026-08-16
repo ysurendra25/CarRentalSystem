@@ -122,10 +122,6 @@ public class UserTable {
 	  public void setAddress(String address) {
 		  this.address = address;
 	  }
-	  @Override
-	public int hashCode() {
-		return Objects.hash(address, created_at, email, password_hash, phone, pname, role, update_at, user_id);
-	}
 	  public LocalDateTime getUpdate_at() {
 		  return update_at;
 	  }
@@ -140,19 +136,20 @@ public class UserTable {
 		  this.ownerRejectedAt = ownerRejectedAt;
 	  }
 	  @Override
-	  public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UserTable other = (UserTable) obj;
-		return Objects.equals(address, other.address) && Objects.equals(created_at, other.created_at)
-				&& Objects.equals(email, other.email) && Objects.equals(password_hash, other.password_hash)
-				&& Objects.equals(phone, other.phone) && Objects.equals(pname, other.pname) && role == other.role
-				&& Objects.equals(update_at, other.update_at) && user_id == other.user_id;
+	  public int hashCode() {
+	      return Objects.hash(user_id);
 	  }
+
+	  @Override
+	  public boolean equals(Object obj) {
+	      if (this == obj)
+	          return true;
+	      if (obj == null || getClass() != obj.getClass())
+	          return false;
+	      UserTable other = (UserTable) obj;
+	      return user_id == other.user_id;
+	  }
+
 	  @Override
 	  public String toString() {
 		return "UserTable [user_id=" + user_id + ", pname=" + pname + ", email=" + email + ", phone=" + phone

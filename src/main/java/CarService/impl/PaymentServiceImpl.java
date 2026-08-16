@@ -107,9 +107,7 @@ public class PaymentServiceImpl implements PaymentService{
 		UserTable user = AuthUtils.getLoggedUser(userRepo);
 		
 		List<PaymentTable> payments = payRepo.findByBookingUserId(user.getUser_id());
-		if(payments.isEmpty()) {
-			throw new RuntimeException("No payments found for this user");
-		}
+
 		List<PaymentResponseDto> resp = new ArrayList<>();
 		for(PaymentTable pay:payments) {
 			resp.add(convertToResponse(pay));
@@ -125,9 +123,7 @@ public class PaymentServiceImpl implements PaymentService{
 			throw new RuntimeException("you have no access");
 		}
 		List<PaymentTable> pay = payRepo.findAll();
-		if(pay.isEmpty()) {
-			throw new RuntimeException("currently in our app no BOOKINGS!");
-		}
+	
 		List<PaymentResponseDto> resp = new ArrayList<>();
 		for(PaymentTable p1:pay) {
 			resp.add(convertToResponse(p1));

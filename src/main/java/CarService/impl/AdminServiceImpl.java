@@ -3,14 +3,10 @@ package CarService.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import CarDto.booking.BookingResponseDto;
 import CarDto.car.CarResponseDto;
-import CarDto.owner.OwnerRequestDto;
 import CarDto.owner.OwnerResponseDto;
 import CarDto.payment.PaymentResponseDto;
 import CarDto.user.UserResponseDto;
@@ -20,10 +16,8 @@ import CarEntity.PaymentTable;
 import CarEntity.UserTable;
 import CarEntity.owner_status;
 import CarEntity.role;
-import CarEntity.status;
 import CarRepo.BookingRepository;
 import CarRepo.CarRepository;
-import CarRepo.CartRepository;
 import CarRepo.PaymentRepository;
 import CarRepo.UserRepository;
 import CarService.AdminService;
@@ -54,7 +48,7 @@ public class AdminServiceImpl implements AdminService{
 		if(user.getRole() != role.ADMIN) {
 			throw new RuntimeException("you have no access for this!");
 		}
-		List<UserTable> owner = userRepo.findByRoleAndOwnerStatus(role.OWNER, owner_status.PENDING);
+		List<UserTable> owner = userRepo.findByRoleAndOwnerStatus(role.CUSTOMER, owner_status.PENDING);
 		
 		List<OwnerResponseDto> resp = new ArrayList<>();
 		
@@ -80,11 +74,12 @@ public class AdminServiceImpl implements AdminService{
 			throw new RuntimeException("you have no access");
 		}
 		UserTable user = userRepo.findById(userId).orElseThrow(()->new RuntimeException("user not found!"));
-		if(user.getRole()!=role.OWNER || user.getOwnerStatus() != owner_status.PENDING) {
+		if(user.getRole()!=role.CUSTOMER || user.getOwnerStatus() != owner_status.PENDING) {
 			throw new RuntimeException("update yourself as owner and request again!");
 		}
 		
 		user.setOwnerStatus(owner_status.APPROVED);
+		user.setRole(role.OWNER); 
 		userRepo.save(user);
 		
 		OwnerResponseDto resp= new OwnerResponseDto();
@@ -102,7 +97,7 @@ public class AdminServiceImpl implements AdminService{
 			throw new RuntimeException("you have no access");
 		}
 		UserTable user = userRepo.findById(userId).orElseThrow(()->new RuntimeException("user not found!"));
-		if(user.getRole()!=role.OWNER || user.getOwnerStatus() != owner_status.PENDING) {
+		if(user.getRole()!=role.CUSTOMER || user.getOwnerStatus() != owner_status.PENDING) {
 			throw new RuntimeException("update yourself as owner and request again!");
 		}
 		
@@ -155,8 +150,10 @@ public class AdminServiceImpl implements AdminService{
 			dto.setCarId(c1.getCar_id());
 			dto.setBrand(c1.getBrand());
 			dto.setModel(c1.getModel());
+			dto.setYear(c1.getYear());  
 			dto.setPricePerDay(c1.getPrice_per_day());
 			dto.setRegistrationNumber(c1.getRegistration_number());
+			dto.setAvailabiltyStatus(c1.getAvailabilty_status()); 
 			
 			resp.add(dto);
 		}
@@ -177,10 +174,12 @@ public class AdminServiceImpl implements AdminService{
 		for(BookingsTable b1:bookings) {
 			BookingResponseDto dto = new BookingResponseDto();
 			dto.setBookingId(b1.getBooking_id());
-			dto.setUser(b1.getUser());
+			dto.setUserId(b1.getUser().getUser_id());
+			dto.setUserEmail(b1.getUser().getEmail());
 			dto.setBrand(b1.getCar().getBrand());
 			dto.setPickupDateTime(b1.getStart_date());
-			dto.setReturnDateTime(b1.getReturn_date());
+			dto.setReturnDateTime(b1.getEnd_date());
+			dto.setEndDateTime(b1.getReturn_date());
 			dto.setTotalPrice(b1.getTotal_price());
 			dto.setBookingStatus(b1.getStatus());
 			dto.setPenaltyAmount(b1.getPenaltyAmount());
@@ -204,7 +203,8 @@ public class AdminServiceImpl implements AdminService{
 			PaymentResponseDto dto = new PaymentResponseDto();
 			dto.setPaymentId(p1.getPayment_id());
 			dto.setBookingId(p1.getBooking().getBooking_id());
-			dto.setUser(p1.getBooking().getUser());
+			dto.setUserId(p1.getBooking().getUser().getUser_id());
+			dto.setEmail(p1.getBooking().getUser().getEmail());
 			dto.setAmount(p1.getAmount());
 			dto.setPaymentMethod(p1.getPayment_method());
 			dto.setPaymentStatus(p1.getPayment_status());

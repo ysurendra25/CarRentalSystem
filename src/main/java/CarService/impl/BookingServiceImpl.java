@@ -6,9 +6,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +17,15 @@ import CarEntity.CarsTable;
 import CarEntity.PaymentTable;
 import CarEntity.UserTable;
 import CarEntity.availabilty_status;
+import CarEntity.payment_status;
+import CarEntity.role;
 import CarEntity.status;
 import CarRepo.BookingRepository;
-import CarRepo.CartRepository;
 import CarRepo.PaymentRepository;
 import CarRepo.UserRepository;
 import CarService.BookingService;
-import CarService.CarService;
 import CarService.PaymentService;
-import Security1.JwtService;
+import CarUtils.AuthUtils;
 import CarRepo.CarRepository;
 
 @Service
@@ -37,7 +34,6 @@ public class BookingServiceImpl implements BookingService{
 	private BookingRepository bookingRepo;
 	private UserRepository userRepo;
 	private CarRepository carRepo;
-	private JwtService jwtService;
 	private PaymentRepository payRepo;
 	private PaymentService paymentService;
 	public BookingServiceImpl(
@@ -55,7 +51,6 @@ public class BookingServiceImpl implements BookingService{
 	    this.paymentService = paymentService;
 	}
 	
-	org.springframework.security.core.Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	@Override
 	public UserTable getLoggedUser() {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -64,7 +59,7 @@ public class BookingServiceImpl implements BookingService{
 	}
 	
 	@Override
-	@jakarta.transaction.Transactional
+	@Transactional
 	public BookingResponseDto createBooking(int carId,BookingRequestDto request) {
 		UserTable user = getLoggedUser();
 		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
@@ -149,9 +144,7 @@ public class BookingServiceImpl implements BookingService{
 		
 		UserTable user = getLoggedUser();
 		List<BookingsTable> bookings = bookingRepo.findByUser(user);
-		if(bookings.isEmpty()) {
-			throw new RuntimeException("No Bookings Yet!");
-		}
+	
 		List<BookingResponseDto> resp = new ArrayList<>();
 		for(BookingsTable book:bookings) {
 			resp.add(convertToResponse(book));
@@ -163,10 +156,12 @@ public class BookingServiceImpl implements BookingService{
 
 	@Override
 	public List<BookingResponseDto> getAllBookings() {
-		List<BookingsTable> book = bookingRepo.findAll();
-		if(book.isEmpty()) {
-			throw new RuntimeException("there are no bookings");
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+		if(user.getRole() != role.ADMIN) {
+			throw new RuntimeException("you have no access!");
 		}
+		
+		List<BookingsTable> book = bookingRepo.findAll();
 		
 		List<BookingResponseDto> resp = new ArrayList<>();
 		
@@ -271,7 +266,6 @@ public class BookingServiceImpl implements BookingService{
 	        return "Booking cancelled successfully";
 	    }
 
-	    // Paid booking
 	    if (booking.getStatus().equals(status.confirmed)) {
 
 	        PaymentTable payment =
@@ -282,20 +276,20 @@ public class BookingServiceImpl implements BookingService{
 	                    "Payment not found for this booking");
 	        }
 
-	        paymentService.refundPayment(
-	                payment.getPayment_id());
+	        paymentService.refundPayment(payment.getPayment_id());
+
+	        booking.setStatus(status.cancelled);
+
+	        CarsTable car = booking.getCar();
+	        car.setAvailabilty_status(availabilty_status.available);
+
+	        bookingRepo.save(booking);
+	        carRepo.save(car);
 
 	        return "Booking cancelled and payment refunded successfully";
 	    }
 		
-		booking.setStatus(status.cancelled);
-		CarsTable car = booking.getCar();
-		car.setAvailabilty_status(availabilty_status.available);
-		
-		bookingRepo.save(booking);
-		carRepo.save(car);
-		
-		return "Booking cancelled successfully";
+		throw new RuntimeException("Invalid booking status!");
 	}
 	@Transactional
 	@Override
@@ -332,10 +326,20 @@ public class BookingServiceImpl implements BookingService{
 	                .multiply(BigDecimal.valueOf(extraDays));
 
 	        booking.setPenaltyAmount(penalty);
+	        //this is for paying penalty
+	        PaymentTable penaltyPayment = new PaymentTable();
+	        penaltyPayment.setBooking(booking);
+	        penaltyPayment.setAmount(penalty);
+	        penaltyPayment.setPayment_status(payment_status.pending);  // user needs to pay this
+	        
+	        payRepo.save(penaltyPayment);
+	        bookingRepo.save(booking);
+	        carRepo.save(booking.getCar());
 
-	        // TODO:
-	        // Create penalty payment.
-	        // Collect penalty amount.
+	        return convertToResponse(booking);
+	        //next step
+	        //ikkada payment inka pending lo undi so ikkada payment method ni call chesi amount receive ayyaka payment_status success chesi booking_status completed ani petti,caravailability status available lo ki marchali..
+	        
 	    } else {
 
 	        booking.setPenaltyAmount(BigDecimal.ZERO);

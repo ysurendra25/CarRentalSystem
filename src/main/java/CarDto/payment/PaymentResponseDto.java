@@ -2,8 +2,6 @@ package CarDto.payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import CarEntity.UserTable;
 import CarEntity.payment_method;
 import CarEntity.payment_status;
 
@@ -11,7 +9,8 @@ public class PaymentResponseDto {
 
 	private int paymentId;
 	private int bookingId;
-	private UserTable user;
+	private int userId;
+	private String email;
 	private BigDecimal amount;
 	private payment_method paymentMethod;
 	private payment_status paymentStatus;
@@ -33,11 +32,19 @@ public class PaymentResponseDto {
 	public void setBookingId(int bookingId) {
 		this.bookingId = bookingId;
 	}
-	public UserTable getUser() {
-		return user;
+	
+	
+	public int getUserId() {
+		return userId;
 	}
-	public void setUser(UserTable user) {
-		this.user = user;
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public BigDecimal getAmount() {
 		return amount;

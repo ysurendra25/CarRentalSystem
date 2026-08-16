@@ -2,33 +2,42 @@ package CarService.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import CarDto.car.CarRequestDto;
 import CarDto.car.CarResponseDto;
 import CarDto.car.CarUpdateDto;
 import CarEntity.CarsTable;
-import CarEntity.CartTable;
 import CarEntity.UserTable;
 import CarEntity.availabilty_status;
-import CarEntity.status;
+import CarEntity.role;
 import CarRepo.CarRepository;
+import CarRepo.UserRepository;
 import CarService.CarService;
+import CarUtils.AuthUtils;
 
 @Service
 public class CarServiceImpl implements CarService {
 
-	private final CarRepository repo;
+	private  CarRepository carRepo;
+	private UserRepository userRepo;
 	
-	public CarServiceImpl(CarRepository repo) {
+	public CarServiceImpl(CarRepository carRepo,UserRepository userRepo) {
 		super();
-		this.repo = repo;
+		this.carRepo = carRepo;
+		this.userRepo = userRepo;
 	}
 
 	@Override
 	public CarResponseDto addCar(CarRequestDto request) {
+		
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+	    if (user.getRole() != role.ADMIN && user.getRole() != role.OWNER) {
+	        throw new RuntimeException("Only admin or owner can add cars");
+	    }
+		if (carRepo.existsByRegistrationNumber(request.getRegistrationNumber())) {
+	        throw new RuntimeException("Registration number already exists");
+	    }
 		
 		CarsTable car = new CarsTable();
 		car.setBrand(request.getBrand());
@@ -38,20 +47,21 @@ public class CarServiceImpl implements CarService {
 		car.setPrice_per_day(request.getPricePerDay());
 		car.setAvailabilty_status(request.getAvailabilityStatus());
 		
-		if (repo.existsByRegistrationNumber(request.getRegistrationNumber())) {
-	        throw new RuntimeException("Registration number already exists");
-	    }
-		
-	    CarsTable savedCar = repo.save(car);
+	    CarsTable savedCar = carRepo.save(car);
 		return convertToResponse(savedCar);
 	}
 
 	@Override
 	public CarResponseDto updateCar(int carId, CarRequestDto request) {
 		
-		CarsTable car = repo.findById(carId).orElseThrow(()->new RuntimeException("Car not Found"));
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+	    if (user.getRole() != role.ADMIN && user.getRole() != role.OWNER) {
+	        throw new RuntimeException("Only admin or owner can add cars");
+	    }
+		
+		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car not Found"));
 		 if (!car.getRegistration_number().equals(request.getRegistrationNumber())
-		            && repo.existsByRegistrationNumber(request.getRegistrationNumber())) {
+		            && carRepo.existsByRegistrationNumber(request.getRegistrationNumber())) {
 
 		        throw new RuntimeException("Registration number already exists");
 		    }
@@ -63,12 +73,13 @@ public class CarServiceImpl implements CarService {
 		car.setPrice_per_day(request.getPricePerDay());
 		car.setAvailabilty_status(request.getAvailabilityStatus());
 		
-		CarsTable updatedCar = repo.save(car);
+		CarsTable updatedCar = carRepo.save(car);
 		
 		return convertToResponse(updatedCar);
 	}
 	
 	private CarResponseDto convertToResponse(CarsTable car) {
+		
 		CarResponseDto response = new CarResponseDto();
 		
 		response.setCarId(car.getCar_id());
@@ -85,7 +96,12 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public CarResponseDto partialUpdate(int carId, CarUpdateDto request) {
 		
-		CarsTable car = repo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+	    if (user.getRole() != role.ADMIN && user.getRole() != role.OWNER) {
+	        throw new RuntimeException("Only admin or owner can add cars");
+	    }
+		
+		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
 		
 		if(request.getBrand()!=null) {
 			car.setBrand(request.getBrand());
@@ -110,7 +126,7 @@ public class CarServiceImpl implements CarService {
 		    car.setAvailabilty_status(request.getAvailabiltyStatus());
 		}
 		
-		CarsTable updatedCar = repo.save(car);
+		CarsTable updatedCar = carRepo.save(car);
 		
 		return convertToResponse(updatedCar);
 	}
@@ -118,15 +134,21 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public String deleteCar(int carId) {
 		
-		CarsTable car = repo.findById(carId).orElseThrow(()->new RuntimeException("Car Not found"));
-		repo.delete(car);
+		UserTable user = AuthUtils.getLoggedUser(userRepo);
+	    if (user.getRole() != role.ADMIN && user.getRole() != role.OWNER) {
+	        throw new RuntimeException("Only admin or owner can add cars");
+	    }
+		
+		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car Not found"));
+		carRepo.delete(car);
 		
 		return "Car Deleted Successfully";
 	}
 
 	@Override
 	public CarResponseDto getCarById(int carId) {
-		CarsTable car = repo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
+		
+		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
 		
 		return convertToResponse(car);
 	}
@@ -134,7 +156,7 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarResponseDto> getAllCars() {
 		
-		List<CarsTable> cars = repo.findAll();
+		List<CarsTable> cars = carRepo.findAll();
 		List<CarResponseDto> respList = new ArrayList<>();
 		for(CarsTable car:cars) {
 			respList.add(convertToResponse(car));
@@ -145,7 +167,7 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarResponseDto> getCarsByBrand(String brand) {
 		
-		List<CarsTable> cars = repo.findByBrand(brand);
+		List<CarsTable> cars = carRepo.findByBrand(brand);
 		List<CarResponseDto> respList = new ArrayList<>();
 		for(CarsTable car:cars) {
 			respList.add(convertToResponse(car));
@@ -156,7 +178,7 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarResponseDto> getCarsByModel(String model) {
 		
-		List<CarsTable> cars = repo.findByModel(model);
+		List<CarsTable> cars = carRepo.findByModel(model);
 		List<CarResponseDto> respList = new ArrayList<>();
 		for(CarsTable car:cars) {
 			respList.add(convertToResponse(car));
@@ -167,7 +189,7 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarResponseDto> getAvailableCars() {
 		
-		List<CarsTable> cars = repo.findByAvailabiltyStatus(availabilty_status.available);
+		List<CarsTable> cars = carRepo.findByAvailabiltyStatus(availabilty_status.available);
 		List<CarResponseDto> respList = new ArrayList<>();
 		for(CarsTable car:cars) {
 			respList.add(convertToResponse(car));

@@ -27,21 +27,18 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public OwnerResponseDto requestOwner(OwnerRequestDto request) {
         UserTable user = AuthUtils.getLoggedUser(userRepo);
-        if (user.getRole() == role.OWNER &&
-            user.getOwnerStatus() == owner_status.APPROVED) {
+        if (user.getOwnerStatus() == owner_status.APPROVED) {
 
             throw new RuntimeException("You are already an owner!");
         }
 
-        if (user.getRole() == role.OWNER &&
-            user.getOwnerStatus() == owner_status.PENDING) {
+        if (user.getOwnerStatus() == owner_status.PENDING) {
 
             throw new RuntimeException(
                     "Your owner request is already pending!");
         }
 
-        if (user.getRole() == role.OWNER &&
-            user.getOwnerStatus() == owner_status.REJECTED) {
+        if (user.getOwnerStatus() == owner_status.REJECTED) {
 
             if (user.getOwnerRejectedAt() == null) {
                 throw new RuntimeException(
@@ -66,8 +63,6 @@ public class OwnerServiceImpl implements OwnerService {
 
         // Normal customer requesting owner access
         else if (user.getRole() == role.CUSTOMER) {
-
-            user.setRole(role.OWNER);
             user.setOwnerStatus(owner_status.PENDING);
         }
         else {
