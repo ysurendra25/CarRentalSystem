@@ -43,9 +43,9 @@ public class CarServiceImpl implements CarService {
 		car.setBrand(request.getBrand());
 		car.setModel(request.getModel());
 		car.setYear(request.getYear());
-		car.setRegistration_number(request.getRegistrationNumber());
-		car.setPrice_per_day(request.getPricePerDay());
-		car.setAvailabilty_status(request.getAvailabilityStatus());
+		car.setRegistrationNumber(request.getRegistrationNumber());
+		car.setPricePerDay(request.getPricePerDay());
+		car.setAvailabilityStatus(request.getAvailabilityStatus());
 		
 	    CarsTable savedCar = carRepo.save(car);
 		return convertToResponse(savedCar);
@@ -60,18 +60,18 @@ public class CarServiceImpl implements CarService {
 	    }
 		
 		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car not Found"));
-		 if (!car.getRegistration_number().equals(request.getRegistrationNumber())
+		 if (!car.getRegistrationNumber().equals(request.getRegistrationNumber())
 		            && carRepo.existsByRegistrationNumber(request.getRegistrationNumber())) {
 
 		        throw new RuntimeException("Registration number already exists");
-		    }
+	    }
 	
 		car.setBrand(request.getBrand());
 		car.setModel(request.getModel());
 		car.setYear(request.getYear());
-		car.setRegistration_number(request.getRegistrationNumber());
-		car.setPrice_per_day(request.getPricePerDay());
-		car.setAvailabilty_status(request.getAvailabilityStatus());
+		car.setRegistrationNumber(request.getRegistrationNumber());
+		car.setPricePerDay(request.getPricePerDay());
+		car.setAvailabilityStatus(request.getAvailabilityStatus());
 		
 		CarsTable updatedCar = carRepo.save(car);
 		
@@ -82,13 +82,13 @@ public class CarServiceImpl implements CarService {
 		
 		CarResponseDto response = new CarResponseDto();
 		
-		response.setCarId(car.getCar_id());
+		response.setCarId(car.getCarId());
         response.setBrand(car.getBrand());
         response.setModel(car.getModel());
         response.setYear(car.getYear());
-        response.setRegistrationNumber(car.getRegistration_number());
-        response.setPricePerDay(car.getPrice_per_day());
-        response.setAvailabiltyStatus(car.getAvailabilty_status());
+        response.setRegistrationNumber(car.getRegistrationNumber());
+        response.setPricePerDay(car.getPricePerDay());
+        response.setAvailabilityStatus(car.getAvailabilityStatus());
 		
 		return response;
 	}
@@ -115,15 +115,15 @@ public class CarServiceImpl implements CarService {
 		}
 
 		if (request.getRegistrationNumber() != null) {
-		    car.setRegistration_number(request.getRegistrationNumber());
+		    car.setRegistrationNumber(request.getRegistrationNumber());
 		}
 
 		if (request.getPricePerDay() != null) {
-		    car.setPrice_per_day(request.getPricePerDay());
+		    car.setPricePerDay(request.getPricePerDay());
 		}
 
-		if (request.getAvailabiltyStatus()!=null) {
-		    car.setAvailabilty_status(request.getAvailabiltyStatus());
+		if (request.getAvailabilityStatus()!=null) {
+		    car.setAvailabilityStatus(request.getAvailabilityStatus());;
 		}
 		
 		CarsTable updatedCar = carRepo.save(car);
@@ -189,7 +189,7 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public List<CarResponseDto> getAvailableCars() {
 		
-		List<CarsTable> cars = carRepo.findByAvailabiltyStatus(availabilty_status.available);
+		List<CarsTable> cars = carRepo.findByAvailabilityStatus(availabilty_status.available);
 		List<CarResponseDto> respList = new ArrayList<>();
 		for(CarsTable car:cars) {
 			respList.add(convertToResponse(car));
