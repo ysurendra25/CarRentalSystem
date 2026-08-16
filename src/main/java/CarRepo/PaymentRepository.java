@@ -9,11 +9,11 @@ import CarEntity.PaymentTable;
 import CarEntity.payment_status;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<PaymentTable, Integer>{
+public interface PaymentRepository extends JpaRepository<PaymentTable, Integer> {
 
-	PaymentTable findByBooking_Booking_id(int bookingId);
-	
-	List<PaymentTable> findByBookingUserId(int userId);
-	
-	List<PaymentTable> findByPayment_status(payment_status paymentStatus);
+    PaymentTable findByBookingBookingId(int bookingId);
+
+    List<PaymentTable> findByBookingUserId(int userId);
+
+    List<PaymentTable> findByPaymentStatus(payment_status paymentStatus);
 }

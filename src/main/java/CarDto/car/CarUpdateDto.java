@@ -17,7 +17,7 @@ public class CarUpdateDto {
 
 	    private BigDecimal pricePerDay;
 
-	    private availabilty_status availabiltyStatus;
+	    private availabilty_status availabilityStatus;
 
 		public String getBrand() {
 			return brand;
@@ -59,12 +59,12 @@ public class CarUpdateDto {
 			this.pricePerDay = pricePerDay;
 		}
 
-		public availabilty_status getAvailabiltyStatus() {
-			return availabiltyStatus;
+		public availabilty_status getAvailabilityStatus() {
+			return availabilityStatus;
 		}
 
-		public void setAvailabiltyStatus(availabilty_status availabiltyStatus) {
-			this.availabiltyStatus = availabiltyStatus;
+		public void setAvailabilityStatus(availabilty_status availabilityStatus) {
+			this.availabilityStatus = availabilityStatus;
 		}
 
 	    

@@ -28,7 +28,7 @@ public class CustomerDetailsService implements UserDetailsService {
 
         return new User(
                 user.getEmail(),
-                user.getPassword_hash(),
+                user.getPasswordHash(),
                 Collections.singletonList(
                         new SimpleGrantedAuthority(
                                 "ROLE_" + user.getRole().name().toUpperCase()

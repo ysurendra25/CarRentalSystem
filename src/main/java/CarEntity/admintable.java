@@ -29,18 +29,17 @@ public class admintable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password_hash;
+    @Column(nullable = false, name = "password_hash")
+    private String passwordHash;
 
     @Column(nullable = false)
     private String role;
 
-    @Column(updatable = false)
+    @Column(updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "update_at")
     private LocalDateTime updatedAt;
-
-
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
     private List<UserTable> users;
@@ -58,93 +57,43 @@ public class admintable {
         updatedAt = LocalDateTime.now();
     }
 
-    public int getAid() {
-        return aid;
-    }
+    public int getAid() { return aid; }
+    public void setAid(int aid) { this.aid = aid; }
 
-    public void setAid(int aid) {
-        this.aid = aid;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public String getPassword_hash() {
-        return password_hash;
-    }
+    public List<UserTable> getUsers() { return users; }
+    public void setUsers(List<UserTable> users) { this.users = users; }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public List<UserTable> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<UserTable> users) {
-        this.users = users;
-    }
-
-    public List<CarsTable> getCars() {
-        return cars;
-    }
-
-    public void setCars(List<CarsTable> cars) {
-        this.cars = cars;
-    }
+    public List<CarsTable> getCars() { return cars; }
+    public void setCars(List<CarsTable> cars) { this.cars = cars; }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(aid);
-    }
+    public int hashCode() { return Objects.hash(aid); }
 
     @Override
     public boolean equals(Object obj) {
-
-        if (this == obj)
-            return true;
-
-        if (!(obj instanceof admintable))
-            return false;
-
-        admintable other = ( admintable) obj;
-
+        if (this == obj) return true;
+        if (!(obj instanceof admintable)) return false;
+        admintable other = (admintable) obj;
         return aid == other.aid;
     }
 
     @Override
     public String toString() {
-        return "AdminTable [aid=" + aid +
-                ", username=" + username +
-                ", email=" + email + "]";
+        return "AdminTable [aid=" + aid + ", username=" + username + ", email=" + email + "]";
     }
 }

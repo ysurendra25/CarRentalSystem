@@ -22,7 +22,8 @@ public class PaymentTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int payment_id;
+    @Column(name = "payment_id")
+    private int paymentId;
 
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
@@ -30,15 +31,17 @@ public class PaymentTable {
 
     private BigDecimal amount;
 
-    private LocalDateTime payment_date;
+    @Column(name = "payment_date")
+    private LocalDateTime paymentDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private payment_method payment_method;
+    private payment_method paymentMethod;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
-    private payment_status payment_status;
+    private payment_status paymentStatus;
+
     @Column(name = "razorpay_order_id")
     private String razorpayOrderId;
 
@@ -47,127 +50,58 @@ public class PaymentTable {
 
     @Column(name = "razorpay_signature")
     private String razorpaySignature;
+
     @PrePersist
     protected void onPayDate() {
-
-        if (payment_date == null) {
-            payment_date = LocalDateTime.now();
+        if (paymentDate == null) {
+            paymentDate = LocalDateTime.now();
         }
-
-        if (payment_status == null) {
-            payment_status = payment_status.pending;
+        if (paymentStatus == null) {
+            paymentStatus = payment_status.pending;
         }
     }
 
-    
-    public String getRazorpayOrderId() {
-		return razorpayOrderId;
-	}
+    public int getPaymentId() { return paymentId; }
+    public void setPaymentId(int paymentId) { this.paymentId = paymentId; }
 
-	public void setRazorpayOrderId(String razorpayOrderId) {
-		this.razorpayOrderId = razorpayOrderId;
-	}
+    public BookingsTable getBooking() { return booking; }
+    public void setBooking(BookingsTable booking) { this.booking = booking; }
 
-	public String getRazorpayPaymentId() {
-		return razorpayPaymentId;
-	}
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
 
-	public void setRazorpayPaymentId(String razorpayPaymentId) {
-		this.razorpayPaymentId = razorpayPaymentId;
-	}
+    public LocalDateTime getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(LocalDateTime paymentDate) { this.paymentDate = paymentDate; }
 
-	public String getRazorpaySignature() {
-		return razorpaySignature;
-	}
+    public payment_method getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(payment_method paymentMethod) { this.paymentMethod = paymentMethod; }
 
+    public payment_status getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(payment_status paymentStatus) { this.paymentStatus = paymentStatus; }
 
-	public void setRazorpaySignature(String razorpaySignature) {
-		this.razorpaySignature = razorpaySignature;
-	}
+    public String getRazorpayOrderId() { return razorpayOrderId; }
+    public void setRazorpayOrderId(String razorpayOrderId) { this.razorpayOrderId = razorpayOrderId; }
 
-	public int getPayment_id() {
-        return payment_id;
-    }
+    public String getRazorpayPaymentId() { return razorpayPaymentId; }
+    public void setRazorpayPaymentId(String razorpayPaymentId) { this.razorpayPaymentId = razorpayPaymentId; }
 
-    public void setPayment_id(int payment_id) {
-        this.payment_id = payment_id;
-    }
-
-    public BookingsTable getBooking() {
-        return booking;
-    }
-
-    public void setBooking(BookingsTable booking) {
-        this.booking = booking;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public LocalDateTime getPayment_date() {
-        return payment_date;
-    }
-
-    public void setPayment_date(LocalDateTime payment_date) {
-        this.payment_date = payment_date;
-    }
-
-    public payment_method getPayment_method() {
-        return payment_method;
-    }
-
-    public void setPayment_method(payment_method payment_method) {
-        this.payment_method = payment_method;
-    }
-
-    public payment_status getPayment_status() {
-        return payment_status;
-    }
-
-    public void setPayment_status(payment_status payment_status) {
-        this.payment_status = payment_status;
-    }
+    public String getRazorpaySignature() { return razorpaySignature; }
+    public void setRazorpaySignature(String razorpaySignature) { this.razorpaySignature = razorpaySignature; }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(amount, booking, payment_date, payment_id,
-                payment_method, payment_status);
-    }
+    public int hashCode() { return Objects.hash(paymentId); }
 
     @Override
     public boolean equals(Object obj) {
-
-        if (this == obj)
-            return true;
-
-        if (obj == null)
-            return false;
-
-        if (getClass() != obj.getClass())
-            return false;
-
+        if (this == obj) return true;
+        if (!(obj instanceof PaymentTable)) return false;
         PaymentTable other = (PaymentTable) obj;
-
-        return Objects.equals(amount, other.amount)
-                && Objects.equals(booking, other.booking)
-                && Objects.equals(payment_date, other.payment_date)
-                && payment_id == other.payment_id
-                && payment_method == other.payment_method
-                && payment_status == other.payment_status;
+        return paymentId == other.paymentId;
     }
 
     @Override
     public String toString() {
-        return "PaymentTable [payment_id=" + payment_id
-                + ", booking=" + booking
-                + ", amount=" + amount
-                + ", payment_date=" + payment_date
-                + ", payment_method=" + payment_method
-                + ", payment_status=" + payment_status + "]";
+        return "PaymentTable [paymentId=" + paymentId + ", amount=" + amount + ", paymentDate=" + paymentDate
+                + ", paymentMethod=" + paymentMethod + ", paymentStatus=" + paymentStatus + "]";
     }
 }

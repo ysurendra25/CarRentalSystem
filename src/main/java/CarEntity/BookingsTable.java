@@ -25,7 +25,8 @@ public class BookingsTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int booking_id;
+    @Column(name = "booking_id")
+    private int bookingId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -35,25 +36,27 @@ public class BookingsTable {
     @JoinColumn(name = "car_id", nullable = false)
     private CarsTable car;
 
-    @Column(nullable = false)
-    private LocalDateTime start_date;
+    @Column(nullable = false, name = "start_date")
+    private LocalDateTime startDate;
 
-    @Column(nullable = false)
-    private LocalDateTime end_date;
+    @Column(nullable = false, name = "end_date")
+    private LocalDateTime endDate;
 
-    private LocalDateTime return_date;
+    @Column(name = "return_date")
+    private LocalDateTime returnDate;
 
-    @Column(nullable = false)
-    private BigDecimal total_price;
+    @Column(nullable = false, name = "total_price")
+    private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private status status;
 
-    @Column(updatable = false)
-    private LocalDateTime created_at;
+    @Column(updatable = false, name = "created_at")
+    private LocalDateTime createdAt;
 
-    private LocalDateTime update_at;
+    @Column(name = "update_at")
+    private LocalDateTime updateAt;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal penaltyAmount;
@@ -63,123 +66,60 @@ public class BookingsTable {
 
     @PrePersist
     protected void onCreate() {
-        created_at = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        update_at = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
     }
 
-    public int getBooking_id() {
-        return booking_id;
-    }
+    public int getBookingId() { return bookingId; }
+    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
 
-    public void setBooking_id(int booking_id) {
-        this.booking_id = booking_id;
-    }
+    public UserTable getUser() { return user; }
+    public void setUser(UserTable user) { this.user = user; }
 
-    public UserTable getUser() {
-        return user;
-    }
+    public CarsTable getCar() { return car; }
+    public void setCar(CarsTable car) { this.car = car; }
 
-    public void setUser(UserTable user) {
-        this.user = user;
-    }
+    public LocalDateTime getStartDate() { return startDate; }
+    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }
 
-    public CarsTable getCar() {
-        return car;
-    }
+    public LocalDateTime getEndDate() { return endDate; }
+    public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }
 
-    public void setCar(CarsTable car) {
-        this.car = car;
-    }
+    public LocalDateTime getReturnDate() { return returnDate; }
+    public void setReturnDate(LocalDateTime returnDate) { this.returnDate = returnDate; }
 
-    public LocalDateTime getStart_date() {
-        return start_date;
-    }
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
 
-    public void setStart_date(LocalDateTime start_date) {
-        this.start_date = start_date;
-    }
+    public status getStatus() { return status; }
+    public void setStatus(status status) { this.status = status; }
 
-    public LocalDateTime getEnd_date() {
-        return end_date;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdateAt() { return updateAt; }
 
-    public void setEnd_date(LocalDateTime end_date) {
-        this.end_date = end_date;
-    }
+    public BigDecimal getPenaltyAmount() { return penaltyAmount; }
+    public void setPenaltyAmount(BigDecimal penaltyAmount) { this.penaltyAmount = penaltyAmount; }
 
-    public LocalDateTime getReturn_date() {
-        return return_date;
-    }
-
-    public void setReturn_date(LocalDateTime return_date) {
-        this.return_date = return_date;
-    }
-
-    public BigDecimal getTotal_price() {
-        return total_price;
-    }
-
-    public void setTotal_price(BigDecimal total_price) {
-        this.total_price = total_price;
-    }
-
-    public status getStatus() {
-        return status;
-    }
-
-    public void setStatus(status status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public LocalDateTime getUpdate_at() {
-        return update_at;
-    }
-
-    public BigDecimal getPenaltyAmount() {
-        return penaltyAmount;
-    }
-
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
-        this.penaltyAmount = penaltyAmount;
-    }
-
-    public PaymentTable getPayment() {
-        return payment;
-    }
-
-    public void setPayment(PaymentTable payment) {
-        this.payment = payment;
-    }
+    public PaymentTable getPayment() { return payment; }
+    public void setPayment(PaymentTable payment) { this.payment = payment; }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(booking_id);
-    }
+    public int hashCode() { return Objects.hash(bookingId); }
 
     @Override
     public boolean equals(Object obj) {
-
-        if (this == obj)
-            return true;
-
-        if (!(obj instanceof BookingsTable))
-            return false;
-
+        if (this == obj) return true;
+        if (!(obj instanceof BookingsTable)) return false;
         BookingsTable other = (BookingsTable) obj;
-
-        return booking_id == other.booking_id;
+        return bookingId == other.bookingId;
     }
 
     @Override
     public String toString() {
-        return "BookingsTable [booking_id=" + booking_id + "]";
+        return "BookingsTable [bookingId=" + bookingId + "]";
     }
 }

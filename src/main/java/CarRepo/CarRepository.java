@@ -20,6 +20,6 @@ public interface CarRepository extends JpaRepository<CarsTable, Integer> {
 
     List<CarsTable> findByModel(String model);
 
-    List<CarsTable> findByAvailabiltyStatus(availabilty_status status);
+    List<CarsTable> findByAvailabilityStatus(availabilty_status status);
 
 }

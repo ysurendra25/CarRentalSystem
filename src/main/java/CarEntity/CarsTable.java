@@ -27,7 +27,8 @@ public class CarsTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int car_id;
+    @Column(name = "car_id")
+    private int carId;
 
     @Column(nullable = false)
     private String brand;
@@ -38,22 +39,22 @@ public class CarsTable {
     @Column(nullable = false)
     private int year;
 
-    @Column(nullable = false, unique = true)
-    private String registration_number;
+    @Column(nullable = false, unique = true, name = "registration_number")
+    private String registrationNumber;
 
     @Positive
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price_per_day;
+    @Column(nullable = false, precision = 10, scale = 2, name = "price_per_day")
+    private BigDecimal pricePerDay;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private availabilty_status availabilty_status;
+    @Column(name = "availabilty_status", nullable = false)
+    private availabilty_status availabilityStatus;
 
-    @Column(updatable = false)
-    private LocalDateTime created_at;
+    @Column(updatable = false, name = "created_at")
+    private LocalDateTime createdAt;
 
-    private LocalDateTime update_at;
-
+    @Column(name = "update_at")
+    private LocalDateTime updateAt;
 
     @ManyToOne
     @JoinColumn(name = "aid")
@@ -69,135 +70,67 @@ public class CarsTable {
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
     private List<CartTable> cartItems;
 
-
     @PrePersist
     protected void onCreate() {
-        created_at = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        update_at = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
     }
 
+    public int getCarId() { return carId; }
+    public void setCarId(int carId) { this.carId = carId; }
 
-    public int getCar_id() {
-        return car_id;
-    }
+    public String getBrand() { return brand; }
+    public void setBrand(String brand) { this.brand = brand; }
 
-    public void setCar_id(int car_id) {
-        this.car_id = car_id;
-    }
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
 
-    public String getBrand() {
-        return brand;
-    }
+    public int getYear() { return year; }
+    public void setYear(int year) { this.year = year; }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
+    public String getRegistrationNumber() { return registrationNumber; }
+    public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
 
-    public String getModel() {
-        return model;
-    }
+    public BigDecimal getPricePerDay() { return pricePerDay; }
+    public void setPricePerDay(BigDecimal pricePerDay) { this.pricePerDay = pricePerDay; }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+    public availabilty_status getAvailabilityStatus() { return availabilityStatus; }
+    public void setAvailabilityStatus(availabilty_status availabilityStatus) { this.availabilityStatus = availabilityStatus; }
 
-    public int getYear() {
-        return year;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdateAt() { return updateAt; }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
+    public admintable getAdmin() { return admin; }
+    public void setAdmin(admintable admin) { this.admin = admin; }
 
-    public String getRegistration_number() {
-        return registration_number;
-    }
+    public UserTable getUser() { return user; }
+    public void setUser(UserTable user) { this.user = user; }
 
-    public void setRegistration_number(String registration_number) {
-        this.registration_number = registration_number;
-    }
+    public List<BookingsTable> getBookings() { return bookings; }
+    public void setBookings(List<BookingsTable> bookings) { this.bookings = bookings; }
 
-    public BigDecimal getPrice_per_day() {
-        return price_per_day;
-    }
-
-    public void setPrice_per_day(BigDecimal price_per_day) {
-        this.price_per_day = price_per_day;
-    }
-
-    public availabilty_status getAvailabilty_status() {
-        return availabilty_status;
-    }
-
-    public void setAvailabilty_status(availabilty_status availabilty_status) {
-        this.availabilty_status = availabilty_status;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public LocalDateTime getUpdate_at() {
-        return update_at;
-    }
-
-    public admintable getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(admintable admin) {
-        this.admin = admin;
-    }
-
-    public UserTable getUser() {
-        return user;
-    }
-
-    public void setUser(UserTable user) {
-        this.user = user;
-    }
-
-    public List<BookingsTable> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<BookingsTable> bookings) {
-        this.bookings = bookings;
-    }
-
-    public List<CartTable> getCartItems() {
-        return cartItems;
-    }
-
-    public void setCartItems(List<CartTable> cartItems) {
-        this.cartItems = cartItems;
-    }
+    public List<CartTable> getCartItems() { return cartItems; }
+    public void setCartItems(List<CartTable> cartItems) { this.cartItems = cartItems; }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(car_id);
-    }
+    public int hashCode() { return Objects.hash(carId); }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof CarsTable)) return false;
         CarsTable other = (CarsTable) obj;
-        return car_id == other.car_id;
+        return carId == other.carId;
     }
 
     @Override
     public String toString() {
-        return "CarsTable [car_id=" + car_id +
-                ", brand=" + brand +
-                ", model=" + model +
-                ", year=" + year +
-                ", registration_number=" + registration_number +
-                ", price_per_day=" + price_per_day +
-                ", availabilty_status=" + availabilty_status + "]";
+        return "CarsTable [carId=" + carId + ", brand=" + brand + ", model=" + model + ", year=" + year
+                + ", registrationNumber=" + registrationNumber + ", pricePerDay=" + pricePerDay
+                + ", availabilityStatus=" + availabilityStatus + "]";
     }
 }
