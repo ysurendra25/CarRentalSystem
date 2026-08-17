@@ -73,7 +73,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         OwnerResponseDto resp = new OwnerResponseDto();
 
-        resp.setUserId(savedUser.getUser_id());
+        resp.setUserId(savedUser.getUserId());
         resp.setPname(savedUser.getPname());
         resp.setEmail(savedUser.getEmail());
         resp.setOwnerStatus(

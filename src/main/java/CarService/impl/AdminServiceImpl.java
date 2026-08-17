@@ -54,7 +54,7 @@ public class AdminServiceImpl implements AdminService{
 		
 		for(UserTable u1:owner) {
 			OwnerResponseDto dtoResp = new OwnerResponseDto();
-			dtoResp.setUserId(u1.getUser_id());
+			dtoResp.setUserId(u1.getUserId());
 			dtoResp.setPname(u1.getPname());
 			dtoResp.setEmail(u1.getEmail());
 			dtoResp.setOwnerStatus(u1.getOwnerStatus().name());
@@ -123,7 +123,7 @@ public class AdminServiceImpl implements AdminService{
 		List<UserResponseDto> resp = new ArrayList<>();
 		for(UserTable u1:users) {
 			UserResponseDto dto = new UserResponseDto();
-			dto.setUserId(u1.getUser_id());
+			dto.setUserId(u1.getUserId());
 			dto.setPname(u1.getPname());
 			dto.setEmail(u1.getEmail());
 			dto.setRole(u1.getRole().name());
@@ -147,13 +147,13 @@ public class AdminServiceImpl implements AdminService{
 		List<CarResponseDto> resp = new ArrayList<>();
 		for(CarsTable c1:car) {
 			CarResponseDto dto = new CarResponseDto();
-			dto.setCarId(c1.getCar_id());
+			dto.setCarId(c1.getCarId());
 			dto.setBrand(c1.getBrand());
 			dto.setModel(c1.getModel());
 			dto.setYear(c1.getYear());  
-			dto.setPricePerDay(c1.getPrice_per_day());
-			dto.setRegistrationNumber(c1.getRegistration_number());
-			dto.setAvailabiltyStatus(c1.getAvailabilty_status()); 
+			dto.setPricePerDay(c1.getPricePerDay());
+			dto.setRegistrationNumber(c1.getRegistrationNumber());
+			dto.setAvailabilityStatus(c1.getAvailabilityStatus()); 
 			
 			resp.add(dto);
 		}
@@ -173,14 +173,14 @@ public class AdminServiceImpl implements AdminService{
 		List<BookingResponseDto> resp = new ArrayList<>();
 		for(BookingsTable b1:bookings) {
 			BookingResponseDto dto = new BookingResponseDto();
-			dto.setBookingId(b1.getBooking_id());
-			dto.setUserId(b1.getUser().getUser_id());
+			dto.setBookingId(b1.getBookingId());
+			dto.setUserId(b1.getUser().getUserId());
 			dto.setUserEmail(b1.getUser().getEmail());
 			dto.setBrand(b1.getCar().getBrand());
-			dto.setPickupDateTime(b1.getStart_date());
-			dto.setReturnDateTime(b1.getEnd_date());
-			dto.setEndDateTime(b1.getReturn_date());
-			dto.setTotalPrice(b1.getTotal_price());
+			dto.setPickupDateTime(b1.getStartDate());
+			dto.setReturnDateTime(b1.getEndDate());
+			dto.setEndDateTime(b1.getReturnDate());
+			dto.setTotalPrice(b1.getTotalPrice());
 			dto.setBookingStatus(b1.getStatus());
 			dto.setPenaltyAmount(b1.getPenaltyAmount());
 			resp.add(dto);
@@ -201,14 +201,14 @@ public class AdminServiceImpl implements AdminService{
 		List<PaymentResponseDto> resp = new ArrayList<>();
 		for(PaymentTable p1:payments) {
 			PaymentResponseDto dto = new PaymentResponseDto();
-			dto.setPaymentId(p1.getPayment_id());
-			dto.setBookingId(p1.getBooking().getBooking_id());
-			dto.setUserId(p1.getBooking().getUser().getUser_id());
+			dto.setPaymentId(p1.getPaymentId());
+			dto.setBookingId(p1.getBooking().getBookingId());
+			dto.setUserId(p1.getBooking().getUser().getUserId());
 			dto.setEmail(p1.getBooking().getUser().getEmail());
 			dto.setAmount(p1.getAmount());
-			dto.setPaymentMethod(p1.getPayment_method());
-			dto.setPaymentStatus(p1.getPayment_status());
-			dto.setPaymentDate(p1.getPayment_date());
+			dto.setPaymentMethod(p1.getPaymentMethod());
+			dto.setPaymentStatus(p1.getPaymentStatus());
+			dto.setPaymentDate(p1.getPaymentDate());
 			
 			resp.add(dto);
 		}

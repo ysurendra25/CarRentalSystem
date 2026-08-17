@@ -74,41 +74,87 @@ public class BookingsTable {
         updateAt = LocalDateTime.now();
     }
 
-    public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public int getBookingId() { 
+    		return bookingId; 
+    		}
+    public void setBookingId(int bookingId) { 
+    		this.bookingId = bookingId;
+    		}
 
-    public UserTable getUser() { return user; }
-    public void setUser(UserTable user) { this.user = user; }
+    public UserTable getUser() { 
+    		return user; 
+    		}
+    public void setUser(UserTable user) { 
+    		this.user = user; 
+    		}
 
-    public CarsTable getCar() { return car; }
-    public void setCar(CarsTable car) { this.car = car; }
+    public CarsTable getCar() { 
+    		return car; 
+    		}
+    public void setCar(CarsTable car) { 
+    		this.car = car; 
+    		}
 
-    public LocalDateTime getStartDate() { return startDate; }
-    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }
+    public LocalDateTime getStartDate() { 
+    		return startDate; 
+    		}
+    public void setStartDate(LocalDateTime startDate) { 
+    		this.startDate = startDate; 
+    		}
 
-    public LocalDateTime getEndDate() { return endDate; }
-    public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }
+    public LocalDateTime getEndDate() { 
+    		return endDate; 
+    		}
+    public void setEndDate(LocalDateTime endDate) { 
+    		this.endDate = endDate; 
+    		}
 
-    public LocalDateTime getReturnDate() { return returnDate; }
-    public void setReturnDate(LocalDateTime returnDate) { this.returnDate = returnDate; }
+    public LocalDateTime getReturnDate() { 
+    		return returnDate; 
+    		}
+    public void setReturnDate(LocalDateTime returnDate) { 
+    		this.returnDate = returnDate; 
+    		}
 
-    public BigDecimal getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+    public BigDecimal getTotalPrice() { 
+    		return totalPrice; 
+    		}
+    public void setTotalPrice(BigDecimal totalPrice) { 
+    		this.totalPrice = totalPrice; 
+    		}
 
-    public status getStatus() { return status; }
-    public void setStatus(status status) { this.status = status; }
+    public status getStatus() { 
+    		return status; 
+    		}
+    public void setStatus(status status) { 
+    		this.status = status; 
+    		}
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdateAt() { return updateAt; }
+    public LocalDateTime getCreatedAt() { 
+    		return createdAt; 
+    		}
+    public LocalDateTime getUpdateAt() { 
+    		return updateAt;
+    		}
 
-    public BigDecimal getPenaltyAmount() { return penaltyAmount; }
-    public void setPenaltyAmount(BigDecimal penaltyAmount) { this.penaltyAmount = penaltyAmount; }
+    public BigDecimal getPenaltyAmount() { 
+    		return penaltyAmount; 
+    		}
+    public void setPenaltyAmount(BigDecimal penaltyAmount) { 
+    		this.penaltyAmount = penaltyAmount; 
+    		}
 
-    public PaymentTable getPayment() { return payment; }
-    public void setPayment(PaymentTable payment) { this.payment = payment; }
+    public PaymentTable getPayment() {
+    		return payment; 
+    		}
+    public void setPayment(PaymentTable payment) { 
+    		this.payment = payment; 
+    		}
 
     @Override
-    public int hashCode() { return Objects.hash(bookingId); }
+    public int hashCode() { 
+    		return Objects.hash(bookingId); 
+    		}
 
     @Override
     public boolean equals(Object obj) {

@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService{
 	public BookingResponseDto createBooking(int carId,BookingRequestDto request) {
 		UserTable user = getLoggedUser();
 		CarsTable car = carRepo.findById(carId).orElseThrow(()->new RuntimeException("Car Not Found"));
-		if(!car.getAvailabilty_status().equals(availabilty_status.available) ){
+		if(!car.getAvailabilityStatus().equals(availabilty_status.available) ){
 			throw new RuntimeException("Car is not available....No problem get another best car");
 		}
 		if (!request.getReturnDateTime().isAfter(request.getPickupDateTime())) {
@@ -72,16 +72,16 @@ public class BookingServiceImpl implements BookingService{
 		BookingsTable booking = new BookingsTable();
 		booking.setUser(user);
 		booking.setCar(car);
-		booking.setStart_date(request.getPickupDateTime());
-		booking.setEnd_date(request.getReturnDateTime());
+		booking.setStartDate(request.getPickupDateTime());
+		booking.setEndDate(request.getReturnDateTime());
 		
 		BigDecimal totalprice = calculateTotalPrice(request, car);
-		booking.setTotal_price(totalprice);
+		booking.setTotalPrice(totalprice);
 		booking.setStatus(status.pending);
 		booking.setPenaltyAmount(BigDecimal.ZERO);
 		
 		BookingsTable saveBooking = bookingRepo.save(booking);
-		car.setAvailabilty_status(availabilty_status.booked);
+		car.setAvailabilityStatus(availabilty_status.booked);
 	    carRepo.save(car);
 		
 	    return convertToResponse(saveBooking);
@@ -91,18 +91,20 @@ public class BookingServiceImpl implements BookingService{
 
 	    BookingResponseDto resp = new BookingResponseDto();
 
-	    resp.setBookingId(booking.getBooking_id());
+	    resp.setBookingId(booking.getBookingId());
+	    resp.setUserId(booking.getUser().getUserId());
+	    resp.setUserEmail(booking.getUser().getEmail());
 
-	    resp.setCarId(booking.getCar().getCar_id());
+	    resp.setCarId(booking.getCar().getCarId());
 	    resp.setBrand(booking.getCar().getBrand());
 	    resp.setModel(booking.getCar().getModel());
 
-	    resp.setPickupDateTime(booking.getStart_date());
-	    resp.setReturnDateTime(booking.getEnd_date());
-
+	    resp.setPickupDateTime(booking.getStartDate());
+	    resp.setReturnDateTime(booking.getEndDate());
+	    resp.setEndDateTime(booking.getReturnDate());
 	    resp.setBookingStatus(booking.getStatus());
 
-	    resp.setTotalPrice(booking.getTotal_price());
+	    resp.setTotalPrice(booking.getTotalPrice());
 	    resp.setPenaltyAmount(booking.getPenaltyAmount());
 
 	    return resp;
@@ -110,7 +112,7 @@ public class BookingServiceImpl implements BookingService{
 	
 	private BigDecimal calculateTotalPrice(BookingRequestDto req,CarsTable car) {
 		
-		BigDecimal price = car.getPrice_per_day();
+		BigDecimal price = car.getPricePerDay();
 		LocalDateTime start = req.getPickupDateTime();
 		LocalDateTime end = req.getReturnDateTime();
 		
@@ -188,7 +190,7 @@ public class BookingServiceImpl implements BookingService{
 	        throw new RuntimeException("Only confirmed bookings can be updated.");
 	    }
 
-	    if (booking.getStart_date().isBefore(LocalDateTime.now())) {
+	    if (booking.getStartDate().isBefore(LocalDateTime.now())) {
 	        throw new RuntimeException("Booking already started. Please contact customer care.");
 	    }
 
@@ -196,7 +198,7 @@ public class BookingServiceImpl implements BookingService{
 	        throw new RuntimeException("Return date must be after pickup date.");
 	    }
 
-	    BigDecimal oldTotalPrice = booking.getTotal_price();
+	    BigDecimal oldTotalPrice = booking.getTotalPrice();
 
 	    BigDecimal newTotalPrice = calculateTotalPrice(request, booking.getCar());
 
@@ -221,9 +223,9 @@ public class BookingServiceImpl implements BookingService{
 
 	    }
 
-	    booking.setStart_date(request.getPickupDateTime());
-	    booking.setEnd_date(request.getReturnDateTime());
-	    booking.setTotal_price(newTotalPrice);
+	    booking.setStartDate(request.getPickupDateTime());
+	    booking.setEndDate(request.getReturnDateTime());
+	    booking.setTotalPrice(newTotalPrice);
 	    BookingsTable updatedBooking = bookingRepo.save(booking);
 
 	    return convertToResponse(updatedBooking);
@@ -248,7 +250,7 @@ public class BookingServiceImpl implements BookingService{
 			throw new RuntimeException("it is already completed/cancelled");
 		}
 		
-		if(booking.getStart_date().isBefore(LocalDateTime.now())) {
+		if(booking.getStartDate().isBefore(LocalDateTime.now())) {
 			throw new RuntimeException("Booking already stated.Contact customer care");
 		}
 		// Unpaid booking
@@ -257,7 +259,7 @@ public class BookingServiceImpl implements BookingService{
 	        booking.setStatus(status.cancelled);
 
 	        CarsTable car = booking.getCar();
-	        car.setAvailabilty_status(
+	        car.setAvailabilityStatus(
 	                availabilty_status.available);
 
 	        bookingRepo.save(booking);
@@ -269,19 +271,19 @@ public class BookingServiceImpl implements BookingService{
 	    if (booking.getStatus().equals(status.confirmed)) {
 
 	        PaymentTable payment =
-	                payRepo.findByBooking_Booking_id(bookingId);
+	                payRepo.findByBookingBookingId(bookingId);
 
 	        if (payment == null) {
 	            throw new RuntimeException(
 	                    "Payment not found for this booking");
 	        }
 
-	        paymentService.refundPayment(payment.getPayment_id());
+	        paymentService.refundPayment(payment.getPaymentId());
 
 	        booking.setStatus(status.cancelled);
 
 	        CarsTable car = booking.getCar();
-	        car.setAvailabilty_status(availabilty_status.available);
+	        car.setAvailabilityStatus(availabilty_status.available);
 
 	        bookingRepo.save(booking);
 	        carRepo.save(car);
@@ -305,16 +307,16 @@ public class BookingServiceImpl implements BookingService{
 	    if (!booking.getStatus().equals(status.confirmed)) {
 	        throw new RuntimeException("Only confirmed bookings can be returned.");
 	    }
-	    if (booking.getReturn_date() != null) {
+	    if (booking.getReturnDate() != null) {
 	        throw new RuntimeException("Car already returned.");
 	    }
 
 	    LocalDateTime actualReturn = LocalDateTime.now();
-	    booking.setReturn_date(actualReturn);
-	    if (actualReturn.isAfter(booking.getEnd_date())) {
+	    booking.setReturnDate(actualReturn);
+	    if (actualReturn.isAfter(booking.getEndDate())) {
 
 	        long extraDays = ChronoUnit.DAYS.between(
-	                booking.getEnd_date(),
+	                booking.getEndDate(),
 	                actualReturn);
 
 	        if (extraDays <= 0) {
@@ -322,7 +324,7 @@ public class BookingServiceImpl implements BookingService{
 	        }
 
 	        BigDecimal penalty = booking.getCar()
-	                .getPrice_per_day()
+	                .getPricePerDay()
 	                .multiply(BigDecimal.valueOf(extraDays));
 
 	        booking.setPenaltyAmount(penalty);
@@ -330,7 +332,7 @@ public class BookingServiceImpl implements BookingService{
 	        PaymentTable penaltyPayment = new PaymentTable();
 	        penaltyPayment.setBooking(booking);
 	        penaltyPayment.setAmount(penalty);
-	        penaltyPayment.setPayment_status(payment_status.pending);  // user needs to pay this
+	        penaltyPayment.setPaymentStatus(payment_status.pending);  // user needs to pay this
 	        
 	        payRepo.save(penaltyPayment);
 	        bookingRepo.save(booking);
@@ -347,7 +349,7 @@ public class BookingServiceImpl implements BookingService{
 	    booking.setStatus(status.completed);
 
 	    CarsTable car = booking.getCar();
-	    car.setAvailabilty_status(availabilty_status.available);
+	    car.setAvailabilityStatus(availabilty_status.available);
 	    bookingRepo.save(booking);
 	    carRepo.save(car);
 

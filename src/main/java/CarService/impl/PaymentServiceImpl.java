@@ -44,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService{
 	public PaymentResponseDto payForBooking(int bookingId, PaymentRequestDto paymentRequestDto) {
 		UserTable user = AuthUtils.getLoggedUser(userRepo);
 		BookingsTable book = bookingRepo.findById(bookingId).orElseThrow(()->new RuntimeException("booking not found!"));
-		PaymentTable pay = payRepo.findByBooking_Booking_id(bookingId);
+		PaymentTable pay = payRepo.findByBookingBookingId(bookingId);
 		
 		if(!book.getUser().equals(user)) {
 			throw new RuntimeException("You are not authorized to pay for this booking");
@@ -62,12 +62,12 @@ public class PaymentServiceImpl implements PaymentService{
 		        throw new RuntimeException("Payment already exists for this booking");
 		    }
 		pay = new PaymentTable();
-		BigDecimal totalPrice = book.getTotal_price();
+		BigDecimal totalPrice = book.getTotalPrice();
 		
 		pay.setBooking(book);
 		pay.setAmount(totalPrice);
-		pay.setPayment_method(paymentRequestDto.getPaymentMethod());
-		pay.setPayment_status(payment_status.success);
+		pay.setPaymentMethod(paymentRequestDto.getPaymentMethod());
+		pay.setPaymentStatus(payment_status.success);
 		PaymentTable savedPayment = payRepo.save(pay);
 		book.setStatus(status.confirmed);
 		bookingRepo.save(book);
@@ -78,12 +78,12 @@ public class PaymentServiceImpl implements PaymentService{
 	private PaymentResponseDto convertToResponse(PaymentTable payment) {
 	    PaymentResponseDto resp = new PaymentResponseDto();
 
-	    resp.setPaymentId(payment.getPayment_id());
-	    resp.setBookingId(payment.getBooking().getBooking_id());
+	    resp.setPaymentId(payment.getPaymentId());
+	    resp.setBookingId(payment.getBooking().getBookingId());
 	    resp.setAmount(payment.getAmount());
-	    resp.setPaymentMethod(payment.getPayment_method());
-	    resp.setPaymentStatus(payment.getPayment_status());
-	    resp.setPaymentDate(payment.getPayment_date());
+	    resp.setPaymentMethod(payment.getPaymentMethod());
+	    resp.setPaymentStatus(payment.getPaymentStatus());
+	    resp.setPaymentDate(payment.getPaymentDate());
 	    resp.setRazorpayOrderId(payment.getRazorpayOrderId());
 	    resp.setRazorpayPaymentId(payment.getRazorpayPaymentId());
 
@@ -106,7 +106,7 @@ public class PaymentServiceImpl implements PaymentService{
 	public List<PaymentResponseDto> getPaymentsByUser() {
 		UserTable user = AuthUtils.getLoggedUser(userRepo);
 		
-		List<PaymentTable> payments = payRepo.findByBookingUserId(user.getUser_id());
+		List<PaymentTable> payments = payRepo.findByBookingUserId(user.getUserId());
 
 		List<PaymentResponseDto> resp = new ArrayList<>();
 		for(PaymentTable pay:payments) {
@@ -141,20 +141,20 @@ public class PaymentServiceImpl implements PaymentService{
 		if(!user.equals(pay.getBooking().getUser())) {
 			throw new RuntimeException("you have no access for this payment!");
 		}
-		if(pay.getPayment_status().equals(payment_status.refunded)) {
+		if(pay.getPaymentStatus().equals(payment_status.refunded)) {
 		    throw new RuntimeException("Payment is already refunded");
 		}
-		if(!pay.getPayment_status().equals(payment_status.success)) {
+		if(!pay.getPaymentStatus().equals(payment_status.success)) {
 			throw new RuntimeException("this is not confirmed payment!");
 		}
-		LocalDateTime deadLine = pay.getBooking().getStart_date().minusHours(24);
+		LocalDateTime deadLine = pay.getBooking().getStartDate().minusHours(24);
 		if(LocalDateTime.now().isAfter(deadLine)) {
 		    throw new RuntimeException("Refund period has expired. Contact customer care!");
 		}
 		
-		pay.setPayment_status(payment_status.refunded);
+		pay.setPaymentStatus(payment_status.refunded);
 		book.setStatus(status.cancelled);
-		book.getCar().setAvailabilty_status(availabilty_status.available);
+		book.getCar().setAvailabilityStatus(availabilty_status.available);
 		payRepo.save(pay);
 		bookingRepo.save(book);
 		

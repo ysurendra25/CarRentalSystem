@@ -57,32 +57,66 @@ public class admintable {
         updatedAt = LocalDateTime.now();
     }
 
-    public int getAid() { return aid; }
-    public void setAid(int aid) { this.aid = aid; }
+    public int getAid() { 
+    		return aid; 
+    		}
+    public void setAid(int aid) { 
+    		this.aid = aid; 
+    		}
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() { 
+    		return username; 
+    	}
+    public void setUsername(String username) { 
+    		this.username = username; 
+    		}
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail() { 
+    		return email; 
+    		}
+    public void setEmail(String email) { 
+    		this.email = email; 
+    		}
 
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public String getPasswordHash() { 
+    		return passwordHash; 
+    		}
+    public void setPasswordHash(String passwordHash) { 
+    		this.passwordHash = passwordHash; 
+    		}
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public String getRole() {
+    		return role; 
+    		}
+    public void setRole(String role) { 
+    		this.role = role; 
+    		}
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public LocalDateTime getCreatedAt() { 
+    		return createdAt; 
+    		}
+    public LocalDateTime getUpdatedAt() { 
+    		return updatedAt; 
+    		}
 
-    public List<UserTable> getUsers() { return users; }
-    public void setUsers(List<UserTable> users) { this.users = users; }
+    public List<UserTable> getUsers() { 
+    		return users; 
+    		}
+    public void setUsers(List<UserTable> users) { 
+    		this.users = users; 
+    		}
 
-    public List<CarsTable> getCars() { return cars; }
-    public void setCars(List<CarsTable> cars) { this.cars = cars; }
+    public List<CarsTable> getCars() { 
+    		return cars; 
+    		}
+    public void setCars(List<CarsTable> cars) { 
+    		this.cars = cars; 
+    		}
 
     @Override
-    public int hashCode() { return Objects.hash(aid); }
+    public int hashCode() { 
+    		return Objects.hash(aid); 
+    		}
 
     @Override
     public boolean equals(Object obj) {

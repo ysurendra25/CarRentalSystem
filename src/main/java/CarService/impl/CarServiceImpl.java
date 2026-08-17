@@ -64,7 +64,7 @@ public class CarServiceImpl implements CarService {
 		            && carRepo.existsByRegistrationNumber(request.getRegistrationNumber())) {
 
 		        throw new RuntimeException("Registration number already exists");
-	    }
+		    }
 	
 		car.setBrand(request.getBrand());
 		car.setModel(request.getModel());
@@ -123,7 +123,7 @@ public class CarServiceImpl implements CarService {
 		}
 
 		if (request.getAvailabilityStatus()!=null) {
-		    car.setAvailabilityStatus(request.getAvailabilityStatus());;
+		    car.setAvailabilityStatus(request.getAvailabilityStatus());
 		}
 		
 		CarsTable updatedCar = carRepo.save(car);
