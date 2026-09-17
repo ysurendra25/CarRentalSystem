@@ -24,7 +24,6 @@ public class AdminController {
 		this.aservice = aservice;
 	}
 
-
 	@GetMapping("/ownerRequests")
 	public List<OwnerResponseDto> getAllRequests() {
 		List<OwnerResponseDto> resp = aservice.getOwnerRequest();
@@ -33,14 +32,14 @@ public class AdminController {
 	}
 	
 	@PutMapping("/approveOwner/{userId}")
-	public OwnerResponseDto approveOwner(@PathVariable int userId) {
+	public OwnerResponseDto approveOwner(@PathVariable("userId") int userId) {
 		OwnerResponseDto resp = aservice.approveOwner(userId);
 		
 		return resp;
 	}
 	
 	@PutMapping("/rejectOwner/{userId}")
-	public OwnerResponseDto rejectOwner(@PathVariable int userId) {
+	public OwnerResponseDto rejectOwner(@PathVariable("userId") int userId) {
 		OwnerResponseDto resp = aservice.rejectOwner(userId);
 		
 		return resp;
@@ -49,9 +48,8 @@ public class AdminController {
 	@GetMapping("/getAllUsers")
 	public List<UserResponseDto> getAllUsers() {
 		List<UserResponseDto> resp = aservice.getAllUsers();
-		
+					
 		return resp;
-				
 	}
 	
 	@GetMapping("/getAllCars")
@@ -64,7 +62,7 @@ public class AdminController {
 	@GetMapping("/getAllBookings")
 	public List<BookingResponseDto> getAllBookings() {
 		List<BookingResponseDto> resp = aservice.getAllBookings();
-	
+		
 		return resp;
 	}
 	
