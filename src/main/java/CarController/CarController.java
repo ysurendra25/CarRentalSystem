@@ -35,7 +35,7 @@ public class CarController {
     // Full Update
     @PutMapping("/{carId}")
     public ResponseEntity<CarResponseDto> updateCar(
-            @PathVariable int carId,
+            @PathVariable("carId") int carId,
             @Valid @RequestBody CarRequestDto request) {
 
         CarResponseDto response = carService.updateCar(carId, request);
@@ -46,7 +46,7 @@ public class CarController {
     // Partial Update
     @PatchMapping("/{carId}")
     public ResponseEntity<CarResponseDto> partialUpdate(
-            @PathVariable int carId,
+            @PathVariable("carId") int carId,
             @RequestBody CarUpdateDto request) {
 
         CarResponseDto response = carService.partialUpdate(carId, request);
@@ -57,7 +57,7 @@ public class CarController {
     // Delete Car
     @DeleteMapping("/{carId}")
     public ResponseEntity<String> deleteCar(
-            @PathVariable int carId) {
+            @PathVariable("carId") int carId) {
 
         String response = carService.deleteCar(carId);
 
@@ -67,7 +67,7 @@ public class CarController {
     // Get Car By Id
     @GetMapping("/{carId}")
     public ResponseEntity<CarResponseDto> getCarById(
-            @PathVariable int carId) {
+            @PathVariable("carId") int carId) {
 
         CarResponseDto response = carService.getCarById(carId);
 
@@ -86,7 +86,7 @@ public class CarController {
     // Get Cars By Brand
     @GetMapping("/brand/{brand}")
     public ResponseEntity<List<CarResponseDto>> getCarsByBrand(
-            @PathVariable String brand) {
+            @PathVariable("brand") String brand) {
 
         List<CarResponseDto> response = carService.getCarsByBrand(brand);
 
@@ -96,7 +96,7 @@ public class CarController {
     // Get Cars By Model
     @GetMapping("/model/{model}")
     public ResponseEntity<List<CarResponseDto>> getCarsByModel(
-            @PathVariable String model) {
+            @PathVariable("model") String model) {
 
         List<CarResponseDto> response = carService.getCarsByModel(model);
 
