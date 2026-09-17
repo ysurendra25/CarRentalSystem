@@ -28,14 +28,14 @@ public class BookingController {
 	}
 
 	@PostMapping("/createBooking/{carId}")
-	public ResponseEntity<BookingResponseDto> createBooking(@PathVariable int carId,@Valid @RequestBody BookingRequestDto req) {
+	public ResponseEntity<BookingResponseDto> createBooking(@PathVariable("carId") int carId,@Valid @RequestBody BookingRequestDto req) {
 		BookingResponseDto resp = bookingService.createBooking(carId, req);
 		
 		return ResponseEntity.ok(resp);
 	}
 	
 	@GetMapping("/getbookingDetails/{bookingId}")
-	public BookingResponseDto getBookingById(@PathVariable int bookingId) {
+	public BookingResponseDto getBookingById(@PathVariable("bookingId") int bookingId) {
 		BookingResponseDto resp = bookingService.getBookingById(bookingId);
 		
 		return resp;
@@ -56,21 +56,21 @@ public class BookingController {
 	}
 	
 	@PutMapping("/updateBooking/{bookingId}")
-	public BookingResponseDto updateBooking(@PathVariable int bookingId,@RequestBody BookingRequestDto req) {
+	public BookingResponseDto updateBooking(@PathVariable("bookingId") int bookingId,@RequestBody BookingRequestDto req) {
 		BookingResponseDto resp = bookingService.updateBooking(bookingId, req);
 		
 		return resp;
 	}
 	
 	@DeleteMapping("/deleteBooking/{bookingId}")
-	public String deleteBooking(@PathVariable int bookingId) {
+	public String deleteBooking(@PathVariable("bookingId") int bookingId) {
 		bookingService.deleteBooking(bookingId);
 		
 		return "deleted booking!";
 	}
 	
 	@PostMapping("/returncar/{bookingId}")
-	public BookingResponseDto returnCar(@PathVariable int bookingId) {
+	public BookingResponseDto returnCar(@PathVariable("bookingId") int bookingId) {
 		BookingResponseDto resp = bookingService.returnCar(bookingId);
 		
 		return resp;
