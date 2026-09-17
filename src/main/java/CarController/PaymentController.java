@@ -25,17 +25,17 @@ public class PaymentController {
 	}
 
     @PostMapping("/payforbooking/{bookingId}")
-	public PaymentResponseDto payForBooking(@PathVariable int bookingId,@Valid @RequestBody PaymentRequestDto req) {
+	public PaymentResponseDto payForBooking(@PathVariable("bookingId") int bookingId,@Valid @RequestBody PaymentRequestDto req) {
 		PaymentResponseDto resp = pservice.payForBooking(bookingId, req);
 		
 		return resp;
 	}
     @GetMapping("/getPaymentDetail/{paymentId}")
-    public PaymentResponseDto getPaymentById(@PathVariable int paymentId) {
+    public PaymentResponseDto getPaymentById(@PathVariable("paymentId") int paymentId) {
     		PaymentResponseDto resp = pservice.getPaymentById(paymentId);
     		
     		return resp;
-    }
+        }
     
     @GetMapping("/getPaymentsByUser")
     public ResponseEntity<List<PaymentResponseDto>> getPaymentsByUser() {
@@ -52,7 +52,7 @@ public class PaymentController {
     }
     
     @PostMapping("/refundPayment/{paymentId}")
-    public PaymentResponseDto refundPayment(@PathVariable int paymentId) {
+    public PaymentResponseDto refundPayment(@PathVariable("paymentId") int paymentId) {
     	    PaymentResponseDto resp = pservice.refundPayment(paymentId);
     	    
     	    return resp;
